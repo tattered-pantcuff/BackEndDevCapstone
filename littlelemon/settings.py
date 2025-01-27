@@ -58,7 +58,7 @@ ROOT_URLCONF = "littlelemon.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["templates"],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -79,15 +79,14 @@ WSGI_APPLICATION = "littlelemon.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-        # MySQL settings. Remove above and edit:
-        # "ENGINE": "django.db.backends.mysql",
-        # "NAME": "js_demo",
-        # "USER": "admindjango",
-        # "PASSWORD": "employee@123!",
-        # "HOST": "127.0.0.1",
-        # "PORT": "3306",
+        # MySQL settings
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "LittleLemon",
+        "USER": "admindjango",
+        "PASSWORD": "employee@123!",
+        "HOST": "127.0.0.1",
+        "PORT": "3306",
+        "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
     }
 }
 
@@ -129,7 +128,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 STATICFILES_DIR = [
-    'restaurant/static',
+    "restaurant/static",
 ]
 
 # Default primary key field type
