@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # 3rd Party
     "rest_framework",
+    "rest_framework.authtoken",
+    "djoser",
     # Local
     "restaurant",
 ]
@@ -137,3 +139,14 @@ STATICFILES_DIR = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # DRF settings
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        # "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+        # "rest_framework.authentication.SessionAuthentication",
+    ),
+}
+
+# Djoser
+
+DJOSER = {"USER_ID_FIELD": "username"}
