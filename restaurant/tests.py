@@ -1,12 +1,13 @@
 from django.test import TestCase
-from restaurant.models import Menu, Booking
-from restaurant.serializers import MenuSerializer, BookingSerializer
+from django.contrib.auth.models import User
 from django.utils import timezone
 from django.urls import reverse
+
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient, force_authenticate
-from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
+from rest_framework.test import APITestCase
+
+from restaurant.models import Menu, Booking
+from restaurant.serializers import MenuSerializer, BookingSerializer
 
 
 # Create your tests here.
