@@ -1,6 +1,6 @@
 from django.test import TestCase
 from restaurant.models import Menu, Booking
-from restaurant.serializers import MenuSerializer
+from restaurant.serializers import MenuSerializer, BookingSerializer
 from django.utils import timezone
 from django.urls import reverse
 from rest_framework import status
@@ -49,27 +49,87 @@ class BookingTests(TestCase):
 
 
 # Views
-class MenuViewTest(TestCase):
+class MenuViewTest(APITestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUp(self):
 
-        cls.menu = Menu.objects.create(
-            title="Test food item",
+        self.menu_url = reverse("menu_list")
+        self.user = User.objects.create_user(
+            username="testadmin", password="testpassword789"
+        )
+        self.item1 = Menu.objects.create(
+            title="Test food item 1",
             price=5,
             inventory=1,
         )
+        self.item2 = Menu.objects.create(
+            title="Test food item 2",
+            price=6.5,
+            inventory=2,
+        )
+        self.item3 = Menu.objects.create(
+            title="Test food item 3",
+            price=7.25,
+            inventory=3,
+        )
 
     def test_menu_listview(self):
+        self.client.login(username="testadmin", password="testpassword789")
+        response = self.client.get(self.menu_url)
+        self.assertEqual(response.status_code, 200)
 
-        response = self.client.get(reverse("menu_list"))
-        item = Menu.objects.all()
-        #serialized_item = MenuSerializer(item)
-        self.assertContains(response, item)
+        serialized_items = MenuSerializer(Menu.objects.all(), many=True)
+        self.assertEqual(response.data, serialized_items.data)
+        self.assertEqual(len(response.data), 3)
 
-# Write a MenuViewTest class that subclasses the TestCase class.
+    def test_menu_create(self):
+        self.client.login(username="testadmin", password="testpassword789")
+        item = {"title": "Test food item 4", "price": 8, "inventory": 4}
+        response = self.client.post(self.menu_url, item, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Menu.objects.count(), 4)
 
-# Use the setup() method to add a few test instances of the Menu model.
 
-# Next, add another test_getall() instance method to retrieve all the Menu objects added for the test purpose. 
+# Booking
+class BookingViewTest(APITestCase):
+    @classmethod
+    def setUp(self):
+        self.booking_url = reverse("booking_list")
+        self.user = User.objects.create_user(
+            username="testadmin", password="testpassword789"
+        )
+        self.booking1 = Booking.objects.create(
+            name="John",
+            no_of_guests=1,
+            bookingdate="2026-01-29T12:00:00-05:00",
+        )
+        self.booking2 = Booking.objects.create(
+            name="Jane",
+            no_of_guests=1,
+            bookingdate="2026-01-29T13:00:00-05:00",
+        )
+        self.booking3 = Booking.objects.create(
+            name="Misha",
+            no_of_guests=1,
+            bookingdate="2026-01-29T14:00:00-05:00",
+        )
 
-# The retrieved objects must serialized, so make sure the method runs assertions to check if the serialized data equals the response.
+    def test_booking_listview(self):
+        self.client.login(username="testadmin", password="testpassword789")
+        response = self.client.get(self.booking_url)
+        self.assertEqual(response.status_code, 200)
+        serialized_items = BookingSerializer(Booking.objects.all(), many=True)
+
+        self.assertEqual(response.data, serialized_items.data)
+        self.assertEqual(len(response.data), 3)
+
+    def test_booking_create(self):
+        self.client.login(username="testadmin", password="testpassword789")
+        booking = {
+            "name": "Sana",
+            "no_of_guests": 1,
+            "bookingdate": "2026-01-29T16:00:00-05:00",
+        }
+        response = self.client.post(self.booking_url, booking, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Booking.objects.count(), 4)
